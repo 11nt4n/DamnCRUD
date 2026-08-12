@@ -16,17 +16,29 @@ def driver():
     chrome_options.add_argument("--disable-dev-shm-usage")
     
     driver = webdriver.Chrome(options=chrome_options)
-    driver.implicitly_wait(5)
+    driver.implicitly_wait(10)
     
     # Prasyarat Login (Dilakukan di setiap worker secara independen)
     base_url = "http://localhost:8000"
-    driver.get(f"{base_url}/login.php")
-    driver.find_element(By.ID, "inputUsername").send_keys("admin")
-    driver.find_element(By.ID, "inputPassword").send_keys("admin123")
-    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    max_retries = 3
     
-    # Tunggu sampai login berhasil dan diarahkan ke halaman index
-    WebDriverWait(driver, 5).until(EC.url_contains("index.php"))
+    from selenium.common.exceptions import TimeoutException
+    
+    for attempt in range(max_retries):
+        try:
+            driver.get(f"{base_url}/login.php")
+            driver.find_element(By.ID, "inputUsername").send_keys("admin")
+            driver.find_element(By.ID, "inputPassword").send_keys("admin123")
+            driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+            
+            # Tunggu sampai login berhasil dan diarahkan ke halaman index
+            WebDriverWait(driver, 10).until(EC.url_contains("index.php"))
+            break
+        except TimeoutException:
+            if attempt < max_retries - 1:
+                time.sleep(2)
+            else:
+                raise
     
     yield driver
     

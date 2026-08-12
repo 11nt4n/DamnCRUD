@@ -39,10 +39,21 @@ jobs:
       run: mysql -h 127.0.0.1 -u root -proot123 damncrud < db/damncrud.sql
 
     - name: Start PHP Built-in Server
-      run: php -S localhost:8000 &
+      run: php -S localhost:8000 > /tmp/php-server.log 2>&1 &
 
     - name: Wait for server to start
-      run: sleep 3
+      run: |
+        for i in {1..30}; do
+          if curl -s http://localhost:8000/login.php > /dev/null; then
+            echo "Server is ready"
+            exit 0
+          fi
+          echo "Attempt $i: Server not ready, waiting..."
+          sleep 1
+        done
+        echo "Server failed to start"
+        cat /tmp/php-server.log
+        exit 1
 
     - name: Setup Python
       uses: actions/setup-python@v4
