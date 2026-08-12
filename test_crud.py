@@ -25,6 +25,9 @@ def driver():
     driver.find_element(By.ID, "inputPassword").send_keys("admin123")
     driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
     
+    # Tunggu sampai login berhasil dan diarahkan ke halaman index
+    WebDriverWait(driver, 5).until(EC.url_contains("index.php"))
+    
     yield driver
     
     # Teardown
