@@ -51,7 +51,9 @@ def test_2_create_contact_empty(driver):
 # TEST CASE 3: Update Contact
 def test_3_update_contact(driver):
     driver.get("http://localhost:8000/index.php")
-    driver.find_element(By.XPATH, "//a[contains(text(), 'edit')]").click()
+    
+    # Ambil baris terakhir agar tidak bentrok dengan test delete yang mengambil baris pertama
+    driver.find_element(By.XPATH, "(//a[contains(text(), 'edit')])[last()]").click()
     
     phone_field = driver.find_element(By.ID, "phone")
     phone_field.clear()

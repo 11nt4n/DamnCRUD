@@ -15,7 +15,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root123
-          MYSQL_DATABASE: badcrud
+          MYSQL_DATABASE: damncrud
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -30,8 +30,11 @@ jobs:
         php-version: '8.1'
         extensions: pdo, pdo_mysql
 
+    - name: Fix Bug in functions.php DB name
+      run: sed -i "s/'badcrud'/'damncrud'/g" functions.php
+
     - name: Setup Database
-      run: mysql -h 127.0.0.1 -u root -proot123 badcrud < db/damncrud.sql
+      run: mysql -h 127.0.0.1 -u root -proot123 damncrud < db/damncrud.sql
 
     - name: Start PHP Built-in Server
       run: php -S localhost:8000 &
