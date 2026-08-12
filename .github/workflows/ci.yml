@@ -36,7 +36,10 @@ jobs:
         sed -i "s/'localhost'/'127.0.0.1'/g" functions.php
 
     - name: Setup Database
-      run: mysql -h 127.0.0.1 -u root -proot123 damncrud < db/damncrud.sql
+      run: |
+        mysql -h 127.0.0.1 -u root -proot123 damncrud < db/damncrud.sql
+        # Reset password admin ke 'admin123' karena hash di file SQL bawaan tidak cocok
+        mysql -h 127.0.0.1 -u root -proot123 damncrud -e "UPDATE users SET password = '$(php -r "echo hash('sha256', 'admin123XDrBmrW9g2fb');")' WHERE username = 'admin'"
 
     - name: Start PHP Built-in Server
       run: php -S localhost:8000 > /tmp/php-server.log 2>&1 &
