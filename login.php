@@ -1,4 +1,7 @@
-<?php include "functions.php"; ?>
+<?php
+session_start();
+include "functions.php"; 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +16,6 @@
     $notif = null;
     if (isset($_POST['username']) && isset($_POST['password'])) {
 
-        session_start();
         $user = $_POST['username'];
         $pass = $_POST['password'];
         $salt = "XDrBmrW9g2fb";
